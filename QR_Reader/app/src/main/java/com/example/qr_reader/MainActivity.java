@@ -7,16 +7,25 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
@@ -49,6 +58,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         qrImageView = findViewById(R.id.qr_image);
+        qrImageView.setOnLongClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(this, v);
+            popupMenu.getMenu().add("Save");
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getTitle().toString().equals("Save")) {
+                    saveImageToGallery();
+                    return true;
+                }
+                return false;
+            });
+            popupMenu.show();
+            return true;
+        });
 
         textToEncodeInp = findViewById(R.id.textToEncodeInput);
         textToEncodeInp.addTextChangedListener(new TextWatcher() {
@@ -67,6 +89,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void saveImageToGallery() {
+        //init dir to save
+        String root = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString();
+        File dir = new File(root + "/QR_SCANNER");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        //Build image name and create file obj
+        final String imgName = String.format("img-{}.jpg", UUID.randomUUID().toString());
+        File img = new File(dir, imgName);
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(img);
+            Drawable drawable = qrImageView.getDrawable();
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+        }
     }
 
     private void handleOpenScannerBtnClick() {
