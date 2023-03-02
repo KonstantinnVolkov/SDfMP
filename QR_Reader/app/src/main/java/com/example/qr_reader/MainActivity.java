@@ -48,14 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private void initComponents() {
         generateQrBtn = findViewById(R.id.generateQrBtn);
         generateQrBtn.setEnabled(false);
-        generateQrBtn.setOnClickListener((v) -> {
-            handleGenerateQrBtnClick();
-        });
+        generateQrBtn.setOnClickListener((v) -> handleGenerateQrBtnClick());
 
         openScannerBtn = findViewById(R.id.openScannerBtn);
-        openScannerBtn.setOnClickListener(v -> {
-            handleOpenScannerBtnClick();
-        });
+        openScannerBtn.setOnClickListener(v -> handleOpenScannerBtnClick());
 
         qrImageView = findViewById(R.id.qr_image);
         qrImageView.setOnLongClickListener(v -> {
@@ -101,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Build image name and create file obj
-        final String imgName = String.format("img-{}.jpg", UUID.randomUUID().toString());
+        final String imgName = String.format("img-%s.jpg", UUID.randomUUID().toString());
         File img = new File(dir, imgName);
 
         try {
@@ -131,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Scanning Result");
                 builder.setMessage(result.getContents());
-                builder.setPositiveButton("OK", (dialog, which) -> {
-                    dialog.dismiss();
-                }).show();
+                builder.setPositiveButton("OK", (dialog, which) ->
+                        dialog.dismiss()
+                ).show();
             }
     );
 
