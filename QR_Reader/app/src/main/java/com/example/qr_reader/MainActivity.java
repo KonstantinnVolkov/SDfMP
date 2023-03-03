@@ -6,18 +6,25 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -124,12 +131,16 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(
             new ScanContract(),
             result -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Scanning Result");
-                builder.setMessage(result.getContents());
-                builder.setPositiveButton("OK", (dialog, which) ->
-                        dialog.dismiss()
-                ).show();
+                final String decodedText = result.getContents();
+                final boolean isUrl = URLUtil.isValidUrl(decodedText);
+                if (isUrl) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(decodedText)));
+                } else {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("Copied!", decodedText);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
+                }
             }
     );
 
