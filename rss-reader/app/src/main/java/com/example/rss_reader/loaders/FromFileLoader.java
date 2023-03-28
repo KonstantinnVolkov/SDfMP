@@ -1,26 +1,27 @@
 package com.example.rss_reader.loaders;
 
-import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
 
-import com.example.rss_reader.models.Article;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
+public class FromFileLoader extends RssLoader{
 
-import java.util.List;
-
-public class FromFileLoader extends AsyncTask<Void, Void, List<Article>> {
-
-//    private final XmlPullParserFactory xmlFactoryObject;
-//    private final XmlPullParser parser;
-
-    @Override
-    protected void onPostExecute(List<Article> articles) {
-        super.onPostExecute(articles);
+    public FromFileLoader(RssFeedCallback callback) {
+        super(callback);
     }
 
     @Override
-    protected List<Article> doInBackground(Void... voids) {
+    protected InputStream getResourceInputStream(String path) {
+        File rssDataFile = new File(path);
+        try {
+            return new FileInputStream(rssDataFile);
+        } catch (Exception e) {
+            Log.e("FromFileLoader.getResourceInputStream", "FIS err", e);
+        }
         return null;
     }
 }

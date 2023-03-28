@@ -15,13 +15,6 @@ public class Article {
     public Article() {
     }
 
-    public Article(String title, String description, String link, Date publishedDate) {
-        this.title = title;
-        this.description = description;
-        this.link = link;
-        this.publishedDate = publishedDate;
-    }
-
     public String getTitle() {
         return title;
     }

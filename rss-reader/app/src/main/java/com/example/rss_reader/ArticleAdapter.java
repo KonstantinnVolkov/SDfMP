@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import java.util.List;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder> {
 
-    private Context context;
+    private final Context context;
     private List<Article> articles;
 
     public ArticleAdapter(Context context, List<Article> articles) {
@@ -67,7 +66,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         return articles.size();
     }
 
-    public class ArticleViewHolder extends RecyclerView.ViewHolder {
+    public static class ArticleViewHolder extends RecyclerView.ViewHolder {
 
         TextView articleTitleOutput;
         TextView articleDescriptionOutput;
